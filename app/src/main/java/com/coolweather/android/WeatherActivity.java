@@ -34,6 +34,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class WeatherActivity extends AppCompatActivity {
+    private TextView mMaxAndMin;
     private ImageView mBingPic;
     private TextView aqiText;
     private TextView pm25Text;
@@ -104,6 +105,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        mMaxAndMin = (TextView)findViewById(R.id.maxandmin);
         mBingPic = (ImageView) findViewById(R.id.bing_pic_img);
         mNavButton = (Button) findViewById(R.id.nav_button);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -194,7 +196,7 @@ public class WeatherActivity extends AppCompatActivity {
     private void showWeatherInfo(Weather weather) {
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
-        String degree = weather.now.temperature + "℃";
+        String degree = weather.now.temperature + "°";
         String weatherInfo = weather.now.more.info;
         mTitleCity.setText(cityName);
         mTitleUpdateTime.setText(updateTime);
@@ -218,9 +220,10 @@ public class WeatherActivity extends AppCompatActivity {
             aqiText.setText(weather.aqi.city.aqi);
             pm25Text.setText(weather.aqi.city.pm25);
         }
-        String comfort = "舒适度" + weather.suggestion.comfort.info;
-        String carWash = "洗车指数" + weather.suggestion.carWash.info;
-        String sport = "运动建议" + weather.suggestion.sport.info;
+        String comfort = "舒适度:" + weather.suggestion.comfort.info;
+        String carWash = "洗车指数:" + weather.suggestion.carWash.info;
+        String sport = "运动建议:" + weather.suggestion.sport.info;
+        mMaxAndMin.setText(weather.forecastList.get(0).temperature.min+"~"+weather.forecastList.get(0).temperature.max);
         mComfortText.setText(comfort);
         mCarWashText.setText(carWash);
         mSportText.setText(sport);
