@@ -6,12 +6,15 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -28,17 +31,24 @@ import com.coolweather.android.service.AutoUpdateService;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
 
+
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.coolweather.android.R.id.drawer_layout;
+import static com.coolweather.android.R.id.nav_about;
+import static com.coolweather.android.R.id.nav_add_city;
+import static com.coolweather.android.R.id.nav_city_control;
+import static com.coolweather.android.R.id.nav_exit;
+import static com.coolweather.android.R.id.nav_settings;
+
+
 public class WeatherActivity extends AppCompatActivity {
     private TextView mMaxAndMin;
     private ImageView mBingPic;
-    private TextView aqiText;
-    private TextView pm25Text;
     private TextView mTitleCity;
     private TextView mTitleUpdateTime;
     private TextView mDegreeText;
@@ -53,7 +63,11 @@ public class WeatherActivity extends AppCompatActivity {
     private ScrollView mWeatherLayout;
     public SwipeRefreshLayout mSwipeRefreshLayout;
     public DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
 
+    /**
+     * @param savedInstanceState
+     */
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +76,12 @@ public class WeatherActivity extends AppCompatActivity {
             Window window = getWindow();
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.setStatusBarColor(Color.TRANSPARENT);
+        }
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+            //将侧边栏顶部延伸至status bar
+            mDrawerLayout.setFitsSystemWindows(true);
+            //将主页面顶部延伸至status bar;虽默认为false,但经测试,DrawerLayout需显示设置
+            mDrawerLayout.setClipToPadding(false);
         }
         setContentView(R.layout.activity_weather);
         //初始化各控件
@@ -110,9 +130,7 @@ public class WeatherActivity extends AppCompatActivity {
         mMaxAndMin = (TextView)findViewById(R.id.maxandmin);
         mBingPic = (ImageView) findViewById(R.id.bing_pic_img);
         mNavButton = (Button) findViewById(R.id.nav_button);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        aqiText = (TextView) findViewById(R.id.aqi_text);
-        pm25Text = (TextView) findViewById(R.id.pm25_text);
+        mDrawerLayout = (DrawerLayout) findViewById(drawer_layout);
         mTitleCity = (TextView) findViewById(R.id.title_city);
         mTitleUpdateTime = (TextView) findViewById(R.id.title_update_time);
         mDegreeText = (TextView) findViewById(R.id.degree_text);
@@ -125,6 +143,55 @@ public class WeatherActivity extends AppCompatActivity {
         mSportText = (TextView) findViewById(R.id.sport_text);
         mWeatherLayout = (ScrollView) findViewById(R.id.weather_layout);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        mNavigationView = (NavigationView)findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case nav_add_city:
+
+                        break;
+                    case nav_city_control:
+
+                        break;
+
+                    case nav_settings:
+                        break;
+                    case nav_about:
+                        break;
+                    case nav_exit:
+                        break;
+                    default:
+                        break;
+                }
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        });
+
+        //改变上下层的焦点问题
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                drawerView.setClickable(true);
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     /*加载必应每日*/
@@ -219,8 +286,8 @@ public class WeatherActivity extends AppCompatActivity {
         }
 
         if (weather.aqi != null) {
-            aqiText.setText(weather.aqi.city.aqi);
-            pm25Text.setText(weather.aqi.city.pm25);
+            mAqiText.setText(weather.aqi.city.aqi);
+            mPm25Text.setText(weather.aqi.city.pm25);
         }
         String comfort = "舒适度:" + weather.suggestion.comfort.info;
         String carWash = "洗车指数:" + weather.suggestion.carWash.info;
