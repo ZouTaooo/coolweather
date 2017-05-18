@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="switch-button-0.0.3">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/e64c33ae0bf14aa30a43320bd2783bbb728d9a5e/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/e64c33ae0bf14aa30a43320bd2783bbb728d9a5e/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.zcweng/switch-button/0.0.3/d5d9516de797694335817ebe65abf1a5649079a2/switch-button-0.0.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

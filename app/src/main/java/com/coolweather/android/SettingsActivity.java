@@ -3,10 +3,18 @@ package com.coolweather.android;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 
+import com.suke.widget.SwitchButton;
+
 public class SettingsActivity extends BaseActivity {
+
+    private Toolbar mToolbar;
+    private SwitchButton mSwitchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,5 +25,28 @@ public class SettingsActivity extends BaseActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_settings);
+
+        initView();
+        mToolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar!=null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+        }
+        return true;
+    }
+
+    private void initView() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mSwitchButton = (SwitchButton) findViewById(R.id.switch_button);
     }
 }

@@ -1,9 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.coolweather.android.SettingsActivity">
+    android:background="?attr/colorButtonNormal"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="0.08"
+        android:background="?attr/colorPrimaryDark"
+        android:fitsSystemWindows="true"
+        android:gravity="center"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="visible" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="自动更新"
+                android:textSize="18sp" />
+
+            <com.suke.widget.SwitchButton
+                android:id="@+id/switch_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="175dp"
+                android:layout_marginTop="5dp"
+                app:sb_checked="true"
+                app:sb_checked_color="#3366CC" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="360dp"
+            android:layout_height="1dp"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:background="#A9A9A9" />
+    </LinearLayout>
+   </LinearLayout>
