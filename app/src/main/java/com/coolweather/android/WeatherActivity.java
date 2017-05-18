@@ -12,7 +12,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,9 +27,9 @@ import com.bumptech.glide.Glide;
 import com.coolweather.android.gson.Forecast;
 import com.coolweather.android.gson.Weather;
 import com.coolweather.android.service.AutoUpdateService;
+import com.coolweather.android.util.ControlActivity;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
-
 
 import java.io.IOException;
 
@@ -46,7 +45,7 @@ import static com.coolweather.android.R.id.nav_exit;
 import static com.coolweather.android.R.id.nav_settings;
 
 
-public class WeatherActivity extends AppCompatActivity {
+public class WeatherActivity extends BaseActivity {
     private TextView mMaxAndMin;
     private ImageView mBingPic;
     private TextView mTitleCity;
@@ -77,7 +76,7 @@ public class WeatherActivity extends AppCompatActivity {
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             //将侧边栏顶部延伸至status bar
             mDrawerLayout.setFitsSystemWindows(true);
             //将主页面顶部延伸至status bar;虽默认为false,但经测试,DrawerLayout需显示设置
@@ -127,7 +126,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        mMaxAndMin = (TextView)findViewById(R.id.maxandmin);
+        mMaxAndMin = (TextView) findViewById(R.id.maxandmin);
         mBingPic = (ImageView) findViewById(R.id.bing_pic_img);
         mNavButton = (Button) findViewById(R.id.nav_button);
         mDrawerLayout = (DrawerLayout) findViewById(drawer_layout);
@@ -143,23 +142,34 @@ public class WeatherActivity extends AppCompatActivity {
         mSportText = (TextView) findViewById(R.id.sport_text);
         mWeatherLayout = (ScrollView) findViewById(R.id.weather_layout);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        mNavigationView = (NavigationView)findViewById(R.id.nav_view);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                Intent intent;
+                switch (item.getItemId()) {
                     case nav_add_city:
-
+                        intent = new Intent(WeatherActivity.this, AddActivity.class);
+                        startActivity(intent);
                         break;
-                    case nav_city_control:
 
+                    case nav_city_control:
+                        intent = new Intent(WeatherActivity.this, ControlActivity.class);
+                        startActivity(intent);
                         break;
 
                     case nav_settings:
+                        intent = new Intent(WeatherActivity.this, SettingsActivity.class);
+                        startActivity(intent);
                         break;
+
                     case nav_about:
+                        intent = new Intent(WeatherActivity.this, AboutActivity.class);
+                        startActivity(intent);
                         break;
+
                     case nav_exit:
+                        finishAll();
                         break;
                     default:
                         break;
@@ -208,7 +218,7 @@ public class WeatherActivity extends AppCompatActivity {
                 final String bingPic = response.body().string();
                 SharedPreferences.Editor editor = PreferenceManager.
                         getDefaultSharedPreferences(WeatherActivity.this).edit();
-                editor.putString("bing_pic",bingPic);
+                editor.putString("bing_pic", bingPic);
                 editor.apply();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -292,7 +302,7 @@ public class WeatherActivity extends AppCompatActivity {
         String comfort = "舒适度:" + weather.suggestion.comfort.info;
         String carWash = "洗车指数:" + weather.suggestion.carWash.info;
         String sport = "运动建议:" + weather.suggestion.sport.info;
-        mMaxAndMin.setText(weather.forecastList.get(0).temperature.min+"~"+weather.forecastList.get(0).temperature.max);
+        mMaxAndMin.setText(weather.forecastList.get(0).temperature.min + "~" + weather.forecastList.get(0).temperature.max);
         mComfortText.setText(comfort);
         mCarWashText.setText(carWash);
         mSportText.setText(sport);
