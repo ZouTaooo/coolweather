@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.coolweather.android.ControlActivity">
+    tools:context="com.coolweather.android.ControlActivity"
+    android:fitsSystemWindows="true">
 
     <ListView
         android:id="@+id/list_saved"

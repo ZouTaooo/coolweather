@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +58,7 @@ public class ChooseAreaFragment extends Fragment {
 
 
     private static final String TAG = "ChooseAreaFragment";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,7 +83,7 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
-                }else if (currentLevel==LEVEL_COUNTY) {
+                } else if (currentLevel == LEVEL_COUNTY) {
                     String weatherId = countyList.get(position).getWeatherId();
 
                     if (getActivity() instanceof MainActivity) {
@@ -93,14 +93,17 @@ public class ChooseAreaFragment extends Fragment {
                         getActivity().finish();
                     } else if (getActivity() instanceof AddActivity) {
                         //将选择的县存储在数据库内
-                        SavedCity savedCity = new SavedCity();
-                        savedCity.setCountyName(countyList.get(position).getCountyName());
-                        savedCity.setWeatherId(countyList.get(position).getWeatherId());
-                        savedCity.setCityId(countyList.get(position).getCityId());
-                        Log.d(TAG, ""+countyList.get(position).getCountyName());
-                        Log.d(TAG, ""+countyList.get(position).getWeatherId());
-                        Log.d(TAG, ""+countyList.get(position).getCityId());
-                        savedCity.save();
+                        //如果已经存在就不添加
+                        if (DataSupport.where("countyName = ?", countyList.get(position).getCountyName()).find(SavedCity.class).size() == 0) {
+                            SavedCity savedCity = new SavedCity();
+                            savedCity.setCountyName(countyList.get(position).getCountyName());
+                            savedCity.setWeatherId(countyList.get(position).getWeatherId());
+                            savedCity.setCityId(countyList.get(position).getCityId());
+                            //Log.d(TAG, "" + countyList.get(position).getCountyName());
+                            //Log.d(TAG, "" + countyList.get(position).getWeatherId());
+                            //Log.d(TAG, "" + countyList.get(position).getCityId());
+                            savedCity.save();
+                        }
                         getActivity().finish();
                     }
                 }
@@ -109,7 +112,9 @@ public class ChooseAreaFragment extends Fragment {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentLevel == LEVEL_CITY) {
+                if (currentLevel == LEVEL_PROVINCE) {
+                    getActivity().finish();
+                } else if (currentLevel == LEVEL_CITY) {
                     queryProvinces();
                 } else if (currentLevel == LEVEL_COUNTY) {
                     queryCities();
@@ -118,11 +123,17 @@ public class ChooseAreaFragment extends Fragment {
         });
         queryProvinces();
     }
+
+
     /*查询全国所有的省*/
 
     private void queryProvinces() {
         titleText.setText("中国");
-        backButton.setVisibility(View.GONE);
+        if (getActivity() instanceof MainActivity) {
+            backButton.setVisibility(View.GONE);
+        } else {
+            backButton.setVisibility(View.VISIBLE);
+        }
         provinceList = DataSupport.findAll(Province.class);
         if (provinceList.size() > 0) {
             dataList.clear();

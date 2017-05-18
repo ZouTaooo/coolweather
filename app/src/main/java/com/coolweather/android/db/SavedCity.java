@@ -6,11 +6,25 @@ import org.litepal.crud.DataSupport;
  * Created by asus on 2017/5/18.
  */
 
-public class SavedCity extends DataSupport{
+public class SavedCity extends DataSupport {
     private int id;
     private String countyName;
     private String weatherId;
     private int cityId;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SavedCity) {
+            SavedCity savedCity = (SavedCity) obj;
+            if (savedCity.getCountyName() == this.getCountyName()) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
 
     public int getId() {
         return id;
