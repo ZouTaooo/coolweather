@@ -2,11 +2,10 @@ package com.coolweather.android;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
+import com.coolweather.android.db.SavedCity;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
 
@@ -58,6 +58,7 @@ public class ChooseAreaFragment extends Fragment {
     private int currentLevel;
 
 
+    private static final String TAG = "ChooseAreaFragment";
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -84,19 +85,23 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 }else if (currentLevel==LEVEL_COUNTY) {
                     String weatherId = countyList.get(position).getWeatherId();
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("weather", weatherId);
+
                     if (getActivity() instanceof MainActivity) {
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                        intent.putExtra("weather", weatherId);
+                        intent.putExtra("weatherId", weatherId);
                         startActivity(intent);
                         getActivity().finish();
-                    } else if (getActivity() instanceof WeatherActivity) {
-                        WeatherActivity weatherActivity = (WeatherActivity) getActivity();
-                        weatherActivity.mDrawerLayout.closeDrawers();
-                        weatherActivity.mSwipeRefreshLayout.setRefreshing(true);
-                        weatherActivity.requestWeather(weatherId);
+                    } else if (getActivity() instanceof AddActivity) {
+                        //将选择的县存储在数据库内
+                        SavedCity savedCity = new SavedCity();
+                        savedCity.setCountyName(countyList.get(position).getCountyName());
+                        savedCity.setWeatherId(countyList.get(position).getWeatherId());
+                        savedCity.setCityId(countyList.get(position).getCityId());
+                        Log.d(TAG, ""+countyList.get(position).getCountyName());
+                        Log.d(TAG, ""+countyList.get(position).getWeatherId());
+                        Log.d(TAG, ""+countyList.get(position).getCityId());
+                        savedCity.save();
+                        getActivity().finish();
                     }
                 }
             }

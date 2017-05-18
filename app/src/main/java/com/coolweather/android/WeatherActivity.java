@@ -12,6 +12,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,12 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.coolweather.android.db.SavedCity;
 import com.coolweather.android.gson.Forecast;
 import com.coolweather.android.gson.Weather;
 import com.coolweather.android.service.AutoUpdateService;
-import com.coolweather.android.util.ControlActivity;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
+
+import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
 
@@ -67,6 +70,7 @@ public class WeatherActivity extends BaseActivity {
     /**
      * @param savedInstanceState
      */
+    private static final String TAG = "WeatherActivity";
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,16 +91,17 @@ public class WeatherActivity extends BaseActivity {
         initView();
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String weatherString = preferences.getString("weather", null);
-        final String weatherId;
-        if (weatherString != null) {
-            //有缓存时直接解析天气数据
-            Weather weather = Utility.handleWeatherResponse(weatherString);
-            weatherId = weather.basic.weather;
-            showWeatherInfo(weather);
-        } else {
-            //无缓存时去服务器查询天气
-            weatherId = getIntent().getStringExtra("weather");
+        if (getIntent().getStringExtra("weatherId")==null) {
+            String weatherString = preferences.getString("weather", null);
+            if (weatherString != null) {
+                //有缓存时直接解析天气数据
+                Log.d("无缓存", "" + weatherString);
+                Weather weather = Utility.handleWeatherResponse(weatherString);
+                showWeatherInfo(weather);
+            }
+        }else{
+            final String weatherId;
+            weatherId = getIntent().getStringExtra("weatherId");
             mWeatherLayout.setVisibility(View.INVISIBLE);
             requestWeather(weatherId);
         }
@@ -107,8 +112,10 @@ public class WeatherActivity extends BaseActivity {
                 String weatherString = preferences.getString("weather", null);
                 final String weatherId;
                 Weather weather = Utility.handleWeatherResponse(weatherString);
+                if (weather!=null) {
                 weatherId = weather.basic.weather;
                 requestWeather(weatherId);
+                }
             }
         });
         mNavButton.setOnClickListener(new View.OnClickListener() {
@@ -154,8 +161,12 @@ public class WeatherActivity extends BaseActivity {
                         break;
 
                     case nav_city_control:
-                        intent = new Intent(WeatherActivity.this, ControlActivity.class);
-                        startActivity(intent);
+                        if (DataSupport.findAll(SavedCity.class).size()<=0) {
+                            Toast.makeText(WeatherActivity.this,"还未添加城市！",Toast.LENGTH_SHORT).show();
+                        }else {
+                            intent = new Intent(WeatherActivity.this, ControlActivity.class);
+                            startActivity(intent);
+                        }
                         break;
 
                     case nav_settings:
@@ -174,7 +185,6 @@ public class WeatherActivity extends BaseActivity {
                     default:
                         break;
                 }
-                mDrawerLayout.closeDrawers();
                 return true;
             }
         });

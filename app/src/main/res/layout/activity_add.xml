@@ -5,5 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.coolweather.android.AddActivity">
-
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/add_city"
+        android:name="com.coolweather.android.ChooseAreaFragment"/>
 </android.support.constraint.ConstraintLayout>

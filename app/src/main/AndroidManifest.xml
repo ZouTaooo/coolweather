@@ -30,7 +30,7 @@
 
         <activity android:name=".AddActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".util.ControlActivity" />
+        <activity android:name=".ControlActivity" />
         <activity android:name=".AboutActivity"></activity>
     </application>
 
