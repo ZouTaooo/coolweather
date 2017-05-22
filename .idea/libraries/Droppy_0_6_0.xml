@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Droppy-0.6.0">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/3b512df29ef2f340b41626e3f68705635e3e37a5/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/3b512df29ef2f340b41626e3f68705635e3e37a5/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.shehabic.droppy/Droppy/0.6.0/c597e01930e14db1b2ca22e207e98dc20b6f1d2f/Droppy-0.6.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
