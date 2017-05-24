@@ -15,23 +15,34 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
+            android:launchMode="singleTask"
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".WeatherActivity" />
+        <activity
+            android:name=".WeatherActivity"
+           />
 
         <service
             android:name=".service.AutoUpdateService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".AddActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".ControlActivity" />
-        <activity android:name=".AboutActivity"></activity>
+        <activity
+            android:name=".AddActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".SettingsActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".ControlActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".AboutActivity"
+            android:launchMode="singleTask" />
     </application>
 
 </manifest>

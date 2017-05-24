@@ -85,26 +85,21 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
                 } else if (currentLevel == LEVEL_COUNTY) {
                     String weatherId = countyList.get(position).getWeatherId();
-
+                    if (DataSupport.where("countyName = ?", countyList.get(position).getCountyName()).find(SavedCity.class).size() == 0) {
+                        SavedCity savedCity = new SavedCity();
+                        savedCity.setCountyName(countyList.get(position).getCountyName());
+                        savedCity.setWeatherId(countyList.get(position).getWeatherId());
+                        savedCity.setCityId(countyList.get(position).getCityId());
+                        savedCity.save();
+                    }
                     if (getActivity() instanceof MainActivity) {
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
                         intent.putExtra("weatherId", weatherId);
                         startActivity(intent);
                         getActivity().finish();
                     } else if (getActivity() instanceof AddActivity) {
-                        //将选择的县存储在数据库内
-                        //如果已经存在就不添加
-                        if (DataSupport.where("countyName = ?", countyList.get(position).getCountyName()).find(SavedCity.class).size() == 0) {
-                            SavedCity savedCity = new SavedCity();
-                            savedCity.setCountyName(countyList.get(position).getCountyName());
-                            savedCity.setWeatherId(countyList.get(position).getWeatherId());
-                            savedCity.setCityId(countyList.get(position).getCityId());
-                            //Log.d(TAG, "" + countyList.get(position).getCountyName());
-                            //Log.d(TAG, "" + countyList.get(position).getWeatherId());
-                            //Log.d(TAG, "" + countyList.get(position).getCityId());
-                            savedCity.save();
-                        }
                         getActivity().finish();
+                        Toast.makeText(MyApplication.getContext(),"添加成功^_^",Toast.LENGTH_SHORT).show();
                     }
                 }
             }

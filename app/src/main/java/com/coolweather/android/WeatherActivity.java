@@ -1,5 +1,8 @@
 package com.coolweather.android;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -12,6 +15,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,7 +32,6 @@ import com.bumptech.glide.Glide;
 import com.coolweather.android.db.SavedCity;
 import com.coolweather.android.gson.Forecast;
 import com.coolweather.android.gson.Weather;
-import com.coolweather.android.service.AutoUpdateService;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
 
@@ -91,45 +94,50 @@ public class WeatherActivity extends BaseActivity {
         initView();
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (getIntent().getStringExtra("weatherId") == null) {
+        //开启通知
+        Log.d(TAG, "onCreate: "+preferences.getBoolean("isNotification", false));
+        Log.d(TAG, "onCreate: "+preferences.getString("weather", null));
+        if (preferences.getBoolean("isNotification", false)) {
+            startNotification();
+        }
+        if (getIntent().getStringExtra("weatherId") != null) {
+            Log.d(TAG, "onCreate: "+getIntent().getStringExtra("weatherId"));
+            String weatherId = getIntent().getStringExtra("weatherId");
+            mWeatherLayout.setVisibility(View.INVISIBLE);
+            requestWeather(weatherId);
+        } else {
             String weatherString = preferences.getString("weather", null);
             if (weatherString != null) {
                 //有缓存时直接解析天气数据
-                Log.d("无缓存", "" + weatherString);
                 Weather weather = Utility.handleWeatherResponse(weatherString);
                 showWeatherInfo(weather);
             }
-        } else {
-            final String weatherId;
-            weatherId = getIntent().getStringExtra("weatherId");
-            mWeatherLayout.setVisibility(View.INVISIBLE);
-            requestWeather(weatherId);
         }
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
-                String weatherString = preferences.getString("weather", null);
-                final String weatherId;
-                Weather weather = Utility.handleWeatherResponse(weatherString);
-                if (weather != null) {
-                    weatherId = weather.basic.weather;
-                    requestWeather(weatherId);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
+                    String weatherString = preferences.getString("weather", null);
+                    final String weatherId;
+                    Weather weather = Utility.handleWeatherResponse(weatherString);
+                    if (weather != null) {
+                        weatherId = weather.basic.weather;
+                        requestWeather(weatherId);
+                    }
                 }
+            });
+            mNavButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+            String bingPic = preferences.getString("bing_pic", null);
+            if (bingPic != null) {
+                Glide.with(this).load(bingPic).into(mBingPic);
+            } else {
+                loadBingPic();
             }
-        });
-        mNavButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-        String bingPic = preferences.getString("bing_pic", null);
-        if (bingPic != null) {
-            Glide.with(this).load(bingPic).into(mBingPic);
-        } else {
-            loadBingPic();
-        }
     }
 
     private void initView() {
@@ -162,10 +170,10 @@ public class WeatherActivity extends BaseActivity {
 
                     case nav_city_control:
                         if (DataSupport.findAll(SavedCity.class).size() <= 0) {
-                            Toast.makeText(WeatherActivity.this, "还未添加城市！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(WeatherActivity.this, "还未添加城市T^T", Toast.LENGTH_SHORT).show();
                         } else {
                             intent = new Intent(WeatherActivity.this, ControlActivity.class);
-                            startActivity(intent);
+                            startActivityForResult(intent, 1);
                         }
                         break;
 
@@ -188,7 +196,6 @@ public class WeatherActivity extends BaseActivity {
                 return true;
             }
         });
-
         //改变上下层的焦点问题
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -212,6 +219,24 @@ public class WeatherActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void startNotification() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String weatherString = preferences.getString("weather",null);
+        Weather weather = Utility.handleWeatherResponse(weatherString);
+        Intent intent = new Intent(this, WeatherActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle(weather.now.temperature+"°  " +weather.now.more.info)
+                .setContentText(weather.suggestion.colthes.info)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.logo)
+                .setContentIntent(pi)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build();
+        manager.notify(1, notification);
     }
 
     /*加载必应每日*/
@@ -250,7 +275,7 @@ public class WeatherActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WeatherActivity.this, "获取天气信息失败T^T", Toast.LENGTH_SHORT).show();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 });
@@ -269,9 +294,13 @@ public class WeatherActivity extends BaseActivity {
                             editor.putString("weather", responseText);
                             editor.apply();
                             showWeatherInfo(weather);
+                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
+                            if (preferences.getBoolean("isNotification", false)) {
+                                startNotification();
+                            }
                             mSwipeRefreshLayout.setRefreshing(false);
                         } else {
-                            Toast.makeText(WeatherActivity.this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(WeatherActivity.this, "获取天气信息失败T^T", Toast.LENGTH_SHORT).show();
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
                     }
@@ -317,7 +346,20 @@ public class WeatherActivity extends BaseActivity {
         mCarWashText.setText(carWash);
         mSportText.setText(sport);
         mWeatherLayout.setVisibility(View.VISIBLE);
-        Intent intent = new Intent(this, AutoUpdateService.class);
-        startService(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    String weatherId = data.getStringExtra("weatherId");
+                    Log.d(TAG, "onActivityResult: "+weatherId);
+                    mWeatherLayout.setVisibility(View.INVISIBLE);
+                    requestWeather(weatherId);
+                }
+            default:
+                break;
+        }
     }
 }

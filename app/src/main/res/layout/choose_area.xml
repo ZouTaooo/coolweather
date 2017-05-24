@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -10,13 +11,25 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary">
 
-        <TextView
-            android:id="@+id/title_text"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="#fff"
-            android:textSize="20sp" />
+            android:layout_weight="0.08"
+            android:background="?attr/colorPrimaryDark"
+            android:fitsSystemWindows="true"
+            android:gravity="center"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            android:visibility="visible" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:id="@+id/title_text"
+                android:textSize="20sp"/>
+        </android.support.v7.widget.Toolbar>
 
         <Button
             android:id="@+id/back_button"

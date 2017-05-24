@@ -21,6 +21,10 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class AutoUpdateService extends Service {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
 
     public AutoUpdateService() {
     }
@@ -75,6 +79,7 @@ public class AutoUpdateService extends Service {
             });
         }
     }
+
 
     /*更新每日一应*/
     private void updateBingPic() {

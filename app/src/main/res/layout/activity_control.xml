@@ -4,12 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.coolweather.android.ControlActivity"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical"
+    tools:context="com.coolweather.android.ControlActivity">
 
-    <ListView
-        android:id="@+id/list_saved"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimaryDark"
+        android:fitsSystemWindows="true"
+        android:gravity="center"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="visible" >
+        <TextView
+            android:textColor="#fff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="城市管理"
+            android:textSize="20sp"/>
+    </android.support.v7.widget.Toolbar>
 
+    <LinearLayout
+        android:layout_width="392dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/list_saved"
+            android:layout_width="match_parent"
+            android:layout_height="469dp" />
+    </LinearLayout>
 </LinearLayout>

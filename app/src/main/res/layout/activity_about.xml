@@ -1,9 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.coolweather.android.AboutActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:background="?attr/colorPrimaryDark"
+        android:fitsSystemWindows="true"
+        android:gravity="center"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        android:visibility="visible" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#fff"
+            android:text="关于"
+            android:textSize="20sp"/>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:paddingTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            app:cardBackgroundColor="#FFFF99"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                android:text="    这是一款基于Android端开发的天气预报软件,用于学习和交流。
+   本APP具备查询全国所有的省市县查询任意城市天气、自由切换城市、手动更新天气、设置是否后台自动更新天气、设置更新时间间隔、是否通知栏显示以及添加城市和城市管理功能."
+                android:textSize="20sp" />
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            app:cardBackgroundColor="#FFFF99"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="5dp"
+                android:text="该应用部分资料来源于网络,资源仅供参考,如果无意间侵犯了您的权益,请及时与我们联系,我们将及时撤除。"
+                android:textSize="20sp" />
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+</FrameLayout>
